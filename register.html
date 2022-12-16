@@ -50,9 +50,12 @@
         <div class="flex flex-col items-center gap-4">
             <input id="text" type="text"
                 class=" w-fit text-center bg-transparent text-white border-[3px] rounded-lg p-1 border-[#5c8758]" />
-            <div id="qrcode"
-                class=" w-[100px] md:w-[200px] h-[100px] md:h-[200px] border-[3px] rounded-lg p-1 border-[#5c8758]">
+            <div
+                class="w-[100px] md:w-[200px] h-[100px] md:h-[200px] border-[3px] rounded-lg p-1 border-[#5c8758] flex items-center justify-center">
+                <div id="qrcode" class=" ">
+                </div>
             </div>
+
 
         </div>
 
@@ -142,7 +145,10 @@
 
 </script>
 <script type="text/javascript">
-    var qrcode = new QRCode(document.getElementById("qrcode"));
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 150,
+        height: 150
+    });
     function makeCode() {
         const uniqueCode = Math.random().toString(36).slice(2) +
             Math.random().toString(36)
