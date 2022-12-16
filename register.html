@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: "#2F2C2C",
+                        grn: "#5C8758",
+                        brn: "#A66D6D",
+                    },
+                },
+            },
+        }
+    </script>
+    <title>Register</title>
+</head>
+
+<body>
+    <main class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
+
+        <div class="flex flex-col items-center">
+            <p class=" font-thin max-w-[300px]">Please Screenshot your QR code. This will serve as your key to log in to
+                your account in the future</p>
+            <img class="h-[200px] w-[210px]" src="../imgs/recycle-png.webp"></img>
+        </div>
+
+        <div class="flex flex-col items-center">
+            <div id="qrcode" class=" w-[150px] md:w-[300px] h-[150px] md:h-[300px] "></div>
+            <input id="text" type="text" class=" w-fit text-center bg-transparent text-white" />
+        </div>
+
+        <div class="flex flex-col gap-2 items-center">
+            <button id="recreateBtn" onclick=makeCode()
+                class=" w-[200px] bg-grn w-fit py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
+                Recreate
+            </button>
+            <button
+                class=" w-[200px] bg-grn w-fit  py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
+                Register
+            </button>
+        </div>
+
+
+    </main>
+</body>
+<script type="text/javascript">
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 300,
+        height: 300
+    });
+    function makeCode() {
+        const uniqueCode = Math.random().toString(36).slice(2) +
+            Math.random().toString(36)
+                .toUpperCase().slice(2);
+        document.getElementById("text").value = uniqueCode;
+        qrcode.makeCode(uniqueCode);
+    }
+    makeCode();
+</script>
+
+</html>

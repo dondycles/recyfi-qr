@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: "#2F2C2C",
+                        grn: "#5C8758",
+                        brn: "#A66D6D",
+                    },
+                },
+            },
+        }
+    </script>
+    <title>Home</title>
+</head>
+
+<body>
+    <main class="fixed top-0 bottom-0 right-0 left-0 flex flex-col h-full w-full items-center justify-center gap-10">
+        <h1 class=" text-[25px] font-extrabold ">Welcome To Recy-Fi</h1>
+        <div class="relative">
+            <img class="h-[300px] w-auto" src="../imgs/recycle-png.webp"></img>
+        </div>
+        <button
+            class=" bg-grn w-fit px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
+            Log In
+        </button>
+
+        <p class=" font-thin">
+            New User?
+            <span class="italic cursor-pointer hover:underline">
+                <a href="/register.html">
+                    Click Here
+
+                </a>
+            </span>
+        </p>
+    </main>
+</body>
+
+</html>
