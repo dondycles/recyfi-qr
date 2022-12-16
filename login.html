@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="qrcode.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
@@ -33,47 +34,157 @@
 </head>
 
 <body>
-    <main class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
+    <main class="">
+        <div id="loginSection"
+            class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
 
-        <div class="flex flex-col items-center gap-4">
-            <p id="keyText" class=" font-thin max-w-[300px] text-justify">Please upload your unique QR Code
+            <h1 class=" font-extrabold text-[50px] text-[#5c8758] ">Log In</h1>
+            <div class="flex flex-col items-center gap-4">
+                <p id="keyText" class=" font-thin text-justify">Please upload your unique QR Code to log in
+                </p>
+                <img class=" border-[3px] rounded-lg p-1 border-[#5c8758] w-[220px] cursor-pointer" src="../imgs/up.png"
+                    id="uploadClick"></img>
+                <input type="file" id="qrInput" hidden>
+            </div>
 
-            </p>
-            <img class=" w-[220px] cursor-pointer" src="../imgs/up.png" id="uploadClick"></img>
-            <input type="file" id="qrInput" hidden>
+
+            <p id="orRegister" class=" font-thin">or <span class="italic hover:underline cursor-pointer">
+                    <a href="/register.html">
+                        register
+                    </a>
+                </span></p>
         </div>
 
-        <div class="flex flex-col items-center">
-            <div id="qrcode" class=" w-[150px] lg:w-[200px] h-[150px] lg:h-[200px] "></div>
-            <input id="text" type="text" class=" w-fit text-center bg-transparent text-white" />
+        <div id="userSection"
+            class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
+
+            <div class="border-[3px] border-[#5c8758] px-3 py-10 rounded-xl w-[300px]">
+                <div class="flex flex-row  justify-end gap-2">
+                    <p class="w-fit">user: </p>
+                    <p id="userId" class="w-[200px] "></p>
+                </div>
+
+                <div class="flex flex-row justify-end gap-2">
+                    <p class="w-fit ">status:</p>
+                    <p id="userId" class="w-[200px] "></p>
+
+                </div>
+
+                <div class="flex flex-row  justify-end gap-2">
+                    <p class="w-fit">points: </p>
+                    <p id="userPoints" class="w-[200px] "></p>
+                </div>
+
+                <div class="flex flex-row justify-end gap-2">
+                    <p class="w-fit">time:</p>
+                    <p id="userId" class="w-[200px] "></p>
+
+                </div>
+            </div>
+
         </div>
 
     </main>
 </body>
 
-<script>
+
+
+<script type="module">
+
+
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnf96jY9yVZQUa4thP8nbCrZ5AQwzr_s8",
+        authDomain: "recyfi-v2.firebaseapp.com",
+        databaseURL: "https://recyfi-v2-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "recyfi-v2",
+        storageBucket: "recyfi-v2.appspot.com",
+        messagingSenderId: "1041018790428",
+        appId: "1:1041018790428:web:6d02558b1b86dce87135d9",
+        measurementId: "G-7PKPZKPEG8"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence, inMemoryPersistence, signInWithRedirect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+
+
     const qrInput = document.getElementById("qrInput");
     const uploadClick = document.getElementById("uploadClick");
     const keyText = document.getElementById("keyText");
+    const orRegister = document.getElementById("orRegister");
+    const loginSection = document.getElementById("loginSection");
+    const userSection = document.getElementById("userSection");
+
+    // userSection.style.display = "none"
 
     uploadClick.addEventListener('click', () => qrInput.click())
 
     function fetchRequest(formData) {
-        fetch("https://api.qrserver.com/v1/read-qr-code/", { method: "POST", body: formData }).then(res => res.json()).then(result => {
-            result = result[0].symbol[0].data;
-            console.log(result);
+        fetch("https://api.qrserver.com/v1/read-qr-code/", { method: "POST", body: formData })
+            .then(res => res.json())
+            .then(result => {
+                result = result[0].symbol[0].data;
+                console.log(result)
 
-            keyText.innerHTML = result;
+                // keyText.innerHTML = result;
 
-        })
+                const dbRef = ref(getDatabase());
+                get(child(dbRef, result)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        console.log(snapshot.val());
+
+                        const email = snapshot.child("key").val() + "@gmail.com";
+                        const password = snapshot.child("key").val();
+                        const auth = getAuth();
+
+                        document.getElementById("userId").innerHTML = snapshot.child("key").val()
+                        document.getElementById("userPoints").innerHTML = snapshot.child("point").val();
+                        setPersistence(auth, inMemoryPersistence)
+                            .then(() => {
+                                return signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+
+                                    // Signed in 
+                                    // window.history.pushState({ page: "/login.html" }, "/login.html", "dashboard");
+                                    const user = userCredential.user;
+                                    userSection.style.display = "unset"
+                                    loginSection.style.display = "none"
+
+                                    console.log(user)
+                                    // ...
+                                })
+                                    .catch((error) => {
+                                        const errorCode = error.code;
+                                        const errorMessage = error.message;
+                                    });
+                            })
+
+
+
+                    } else {
+                        console.log("No data available");
+                        keyText.innerHTML = "QR Invalid";
+                        orRegister.style.display = "unset"
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                });
+            })
     }
+
     qrInput.addEventListener("change", e => {
         let file = e.target.files[0];
         let formData = new FormData();
         formData.append("file", file);
         fetchRequest(formData)
         uploadClick.style.display = "none"
-
+        keyText.innerHTML = "Finding you account...";
+        orRegister.style.display = "none"
         console.log(file)
     })
 </script>

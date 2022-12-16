@@ -34,6 +34,7 @@
 
 <body>
     <main class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
+        <h1 class=" font-extrabold text-[50px] text-[#5c8758] ">Register</h1>
 
         <div class="flex flex-col items-center">
             <p class=" font-thin max-w-[300px] text-justify">Please Screenshot your QR code. This will serve as your key
@@ -43,8 +44,11 @@
         </div>
 
         <div class="flex flex-col items-center gap-4">
-            <input id="text" type="text" class=" w-fit text-center bg-transparent text-white" />
-            <div id="qrcode" class=" w-[100px] md:w-[200px] h-[100px] md:h-[200px] "></div>
+            <input id="text" type="text"
+                class=" w-fit text-center bg-transparent text-white border-[3px] rounded-lg p-1 border-[#5c8758]" />
+            <div id="qrcode"
+                class=" w-[100px] md:w-[200px] h-[100px] md:h-[200px] border-[3px] rounded-lg p-1 border-[#5c8758]">
+            </div>
 
         </div>
 
@@ -57,6 +61,11 @@
                 class=" w-[200px] bg-grn w-fit  py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
                 Register
             </button>
+            <p class=" font-thin">or <span class="italic hover:underline cursor-pointer">
+                    <a href="/login.html">
+                        log in
+                    </a>
+                </span></p>
         </div>
 
 
@@ -82,20 +91,36 @@
     const app = initializeApp(firebaseConfig);
 
     import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
     document.getElementById("register").addEventListener('click', writeUserData);
-
 
     function writeUserData() {
         const uniqueKey = document.getElementById("text").value;
         console.log(uniqueKey);
         const db = getDatabase();
         set(ref(db, uniqueKey), {
+            key: uniqueKey,
             point: 0
         });
+
+        const email = uniqueKey + "@gmail.com";
+        const password = uniqueKey;
+
+        const auth = getAuth();
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log(user)
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
     }
 
-    writeUserData();
 </script>
 <script type="text/javascript">
     var qrcode = new QRCode(document.getElementById("qrcode"), {
