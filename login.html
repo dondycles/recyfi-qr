@@ -41,8 +41,8 @@
             <div class="flex flex-col items-center gap-4">
                 <p id="keyText" class=" font-thin text-justify">Please upload your unique QR Code to log in
                 </p>
-                <img class=" border-[3px] rounded-lg p-1 border-[#5c8758] w-[220px] cursor-pointer" src="../imgs/up.png"
-                    id="uploadClick"></img>
+                <img class=" border-[3px] rounded-lg p-1 border-[#5c8758] w-[220px] cursor-pointer active:scale-[0.98] transition-all duration-150"
+                    src="../imgs/up.png" id="uploadClick"></img>
                 <input type="file" id="qrInput" hidden>
             </div>
 
@@ -65,7 +65,7 @@
 
                 <div class="flex flex-row justify-end gap-2">
                     <p class="w-fit ">status:</p>
-                    <p id="userId" class="w-[200px] "></p>
+                    <p class="w-[200px] "></p>
 
                 </div>
 
@@ -76,7 +76,7 @@
 
                 <div class="flex flex-row justify-end gap-2">
                     <p class="w-fit">time:</p>
-                    <p id="userId" class="w-[200px] "></p>
+                    <p id="userTime" class="w-[200px] "></p>
 
                 </div>
             </div>
@@ -84,11 +84,11 @@
             <div class="flex flex-row items-center justify-center gap-6">
 
                 <button
-                    class=" bg-grn w-fit px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
+                    class=" bg-grn w-[137px] py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
                     Connect
                 </button>
                 <button
-                    class=" bg-grn w-fit px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
+                    class=" bg-grn w-[137px] px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
                     Disconnect
                 </button>
 
@@ -126,7 +126,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
 
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence, inMemoryPersistence, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
 
@@ -141,6 +141,7 @@
     userSection.style.display = "none"
 
     uploadClick.addEventListener('click', () => qrInput.click())
+
 
     function fetchRequest(formData) {
         fetch("https://api.qrserver.com/v1/read-qr-code/", { method: "POST", body: formData })
@@ -159,14 +160,14 @@
                         const password = snapshot.child("key").val();
                         const auth = getAuth();
 
-                        document.getElementById("userId").innerHTML = snapshot.child("key").val().substring(0, 9).concat('......').concat(snapshot.child("key").val().substring(snapshot.child("key").val().length - 5))
-                        document.getElementById("userPoints").innerHTML = snapshot.child("point").val();
+
                         setPersistence(auth, inMemoryPersistence)
                             .then(() => {
                                 return signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
 
                                     // Signed in 
-                                    // window.history.pushState({ page: "/login.html" }, "/login.html", "dashboard");
+                                    // window.history.pushState({ page: "/login.html" }, "/login.html", password);
+                                    document.title = "Welcome"
                                     const user = userCredential.user;
                                     userSection.style.display = "flex"
                                     loginSection.style.display = "none"
@@ -197,6 +198,31 @@
                     console.error(error);
 
                 });
+
+                const db = getDatabase();
+                setInterval(() => displayData(), 1000)
+                function displayData() {
+                    return onValue(ref(db, result), (snapshot) => {
+                        const email = snapshot.child("key").val() + "@gmail.com";
+                        const password = snapshot.child("key").val();
+                        const userPoints = snapshot.child("point").val();
+                        let userTime;
+
+                        if (userPoints > 59) {
+                            userTime = userPoints - 59 + ":00:00"
+                        }
+                        else {
+                            userTime = userPoints + ":00";
+                        }
+
+                        document.getElementById("userId").innerHTML = snapshot.child("key").val().substring(0, 9).concat('......').concat(snapshot.child("key").val().substring(snapshot.child("key").val().length - 5))
+                        document.getElementById("userPoints").innerHTML = userPoints;
+                        document.getElementById("userTime").innerHTML = userTime;
+                    }, {
+                        onlyOnce: true
+                    });
+                }
+
             })
     }
 
