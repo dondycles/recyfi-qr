@@ -22,6 +22,9 @@
                         grn: "#5C8758",
                         brn: "#A66D6D",
                     },
+                    animation: {
+                        'spin-slow': 'spin 10s linear infinite reverse',
+                    }
                 },
             },
         }
@@ -40,7 +43,7 @@
             <p class=" font-thin max-w-[300px] text-justify">Please Screenshot your QR code. This will serve as your key
                 to log in to
                 your account in the future</p>
-            <img class="h-[200px] w-[210px]" src="../imgs/recycle-png.webp"></img>
+            <img class="h-[200px] w-[200px] animate-spin-slow origin-center" src="../imgs/logo.png"></img>
         </div>
 
         <div class="flex flex-col items-center gap-4">
@@ -54,11 +57,11 @@
 
         <div class="flex flex-col gap-2 items-center">
             <button id="recreateBtn" onclick=makeCode()
-                class=" w-[200px] bg-grn w-fit py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
+                class=" w-[200px] bg-grn  py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
                 Recreate
             </button>
             <button id="register"
-                class=" w-[200px] bg-grn w-fit  py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
+                class=" w-[200px] bg-grn   py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
                 Register
             </button>
             <p class=" font-thin">or <span class="italic hover:underline cursor-pointer">
@@ -123,10 +126,7 @@
 
 </script>
 <script type="text/javascript">
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        width: 300,
-        height: 300
-    });
+    var qrcode = new QRCode(document.getElementById("qrcode"));
     function makeCode() {
         const uniqueCode = Math.random().toString(36).slice(2) +
             Math.random().toString(36)
@@ -135,6 +135,7 @@
         qrcode.makeCode(uniqueCode);
     }
     makeCode();
+
 
     function download() {
         var qr = document.getElementById("qrcode");

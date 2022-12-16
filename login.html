@@ -34,9 +34,8 @@
 </head>
 
 <body>
-    <main class="">
-        <div id="loginSection"
-            class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
+    <main class="flex flex-col items-center justify-center">
+        <div id="loginSection" class=" min-h-screen py-10 flex flex-col  max-w-full items-center justify-center gap-6">
 
             <h1 class=" font-extrabold text-[50px] text-[#5c8758] ">Log In</h1>
             <div class="flex flex-col items-center gap-4">
@@ -82,6 +81,24 @@
                 </div>
             </div>
 
+            <div class="flex flex-row items-center justify-center gap-6">
+
+                <button
+                    class=" bg-grn w-fit px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
+                    Connect
+                </button>
+                <button
+                    class=" bg-grn w-fit px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
+                    Disconnect
+                </button>
+
+            </div>
+
+            <button id="logOut"
+                class=" bg-yellow-700 w-fit px-6 py-2 rounded-xl active:bg-grn hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
+                Log Out
+            </button>
+
         </div>
 
     </main>
@@ -110,7 +127,7 @@
     const app = initializeApp(firebaseConfig);
 
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence, inMemoryPersistence, signInWithRedirect } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserSessionPersistence, inMemoryPersistence, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
 
 
@@ -121,7 +138,7 @@
     const loginSection = document.getElementById("loginSection");
     const userSection = document.getElementById("userSection");
 
-    // userSection.style.display = "none"
+    userSection.style.display = "none"
 
     uploadClick.addEventListener('click', () => qrInput.click())
 
@@ -132,7 +149,7 @@
                 result = result[0].symbol[0].data;
                 console.log(result)
 
-                // keyText.innerHTML = result;
+                keyText.innerHTML = "Found! " + result;
 
                 const dbRef = ref(getDatabase());
                 get(child(dbRef, result)).then((snapshot) => {
@@ -152,7 +169,7 @@
                                     // Signed in 
                                     // window.history.pushState({ page: "/login.html" }, "/login.html", "dashboard");
                                     const user = userCredential.user;
-                                    userSection.style.display = "unset"
+                                    userSection.style.display = "flex"
                                     loginSection.style.display = "none"
 
                                     console.log(user)
@@ -161,6 +178,10 @@
                                     .catch((error) => {
                                         const errorCode = error.code;
                                         const errorMessage = error.message;
+                                        keyText.innerHTML = "Error: QR Invalid";
+                                        orRegister.style.display = "unset"
+                                        uploadClick.style.display = "unset"
+
                                     });
                             })
 
@@ -168,11 +189,14 @@
 
                     } else {
                         console.log("No data available");
-                        keyText.innerHTML = "QR Invalid";
+                        keyText.innerHTML = "Error: QR Invalid";
                         orRegister.style.display = "unset"
+                        uploadClick.style.display = "unset"
+
                     }
                 }).catch((error) => {
                     console.error(error);
+
                 });
             })
     }
@@ -187,6 +211,25 @@
         orRegister.style.display = "none"
         console.log(file)
     })
+
+    document.getElementById("logOut").addEventListener("click", () => {
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            // Sign-out successful.
+            keyText.innerHTML = "Please upload your unique QR Code to log in";
+            userSection.style.display = "none"
+            loginSection.style.display = "flex"
+            uploadClick.style.display = "unset"
+            orRegister.style.display = "unset"
+
+
+            console.log("loggedOut")
+
+        }).catch((error) => {
+            // An error happened.
+        });
+    }
+    )
 </script>
 
 </html>
