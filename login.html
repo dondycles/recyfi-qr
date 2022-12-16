@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: "#2F2C2C",
+                        grn: "#5C8758",
+                        brn: "#A66D6D",
+                    },
+                },
+            },
+        }
+    </script>
+
+
+
+    <title>Log In</title>
+</head>
+
+<body>
+    <main class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
+
+        <div class="flex flex-col items-center gap-4">
+            <p id="keyText" class=" font-thin max-w-[300px] text-justify">Please upload your unique QR Code
+
+            </p>
+            <img class=" w-[220px] cursor-pointer" src="../imgs/up.png" id="uploadClick"></img>
+            <input type="file" id="qrInput" hidden>
+        </div>
+
+        <div class="flex flex-col items-center">
+            <div id="qrcode" class=" w-[150px] lg:w-[200px] h-[150px] lg:h-[200px] "></div>
+            <input id="text" type="text" class=" w-fit text-center bg-transparent text-white" />
+        </div>
+
+    </main>
+</body>
+
+<script>
+    const qrInput = document.getElementById("qrInput");
+    const uploadClick = document.getElementById("uploadClick");
+    const keyText = document.getElementById("keyText");
+
+    uploadClick.addEventListener('click', () => qrInput.click())
+
+    function fetchRequest(formData) {
+        fetch("http://api.qrserver.com/v1/read-qr-code/", { method: "POST", body: formData }).then(res => res.json()).then(result => {
+            result = result[0].symbol[0].data;
+            console.log(result);
+
+            keyText.innerHTML = result;
+
+        })
+    }
+    qrInput.addEventListener("change", e => {
+        let file = e.target.files[0];
+        let formData = new FormData();
+        formData.append("file", file);
+        fetchRequest(formData)
+        uploadClick.style.display = "none"
+
+        console.log(file)
+    })
+</script>
+
+</html>

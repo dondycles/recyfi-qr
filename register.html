@@ -26,6 +26,9 @@
             },
         }
     </script>
+
+
+
     <title>Register</title>
 </head>
 
@@ -33,14 +36,16 @@
     <main class=" min-h-screen py-10 flex flex-col h-full max-w-full items-center justify-center gap-6">
 
         <div class="flex flex-col items-center">
-            <p class=" font-thin max-w-[300px]">Please Screenshot your QR code. This will serve as your key to log in to
+            <p class=" font-thin max-w-[300px] text-justify">Please Screenshot your QR code. This will serve as your key
+                to log in to
                 your account in the future</p>
             <img class="h-[200px] w-[210px]" src="../imgs/recycle-png.webp"></img>
         </div>
 
-        <div class="flex flex-col items-center">
-            <div id="qrcode" class=" w-[150px] md:w-[300px] h-[150px] md:h-[300px] "></div>
+        <div class="flex flex-col items-center gap-4">
             <input id="text" type="text" class=" w-fit text-center bg-transparent text-white" />
+            <div id="qrcode" class=" w-[150px] lg:w-[200px] h-[150px] lg:h-[200px] "></div>
+
         </div>
 
         <div class="flex flex-col gap-2 items-center">
@@ -48,7 +53,7 @@
                 class=" w-[200px] bg-grn w-fit py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
                 Recreate
             </button>
-            <button
+            <button id="register"
                 class=" w-[200px] bg-grn w-fit  py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
                 Register
             </button>
@@ -57,6 +62,41 @@
 
     </main>
 </body>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnf96jY9yVZQUa4thP8nbCrZ5AQwzr_s8",
+        authDomain: "recyfi-v2.firebaseapp.com",
+        databaseURL: "https://recyfi-v2-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "recyfi-v2",
+        storageBucket: "recyfi-v2.appspot.com",
+        messagingSenderId: "1041018790428",
+        appId: "1:1041018790428:web:6d02558b1b86dce87135d9",
+        measurementId: "G-7PKPZKPEG8"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+    document.getElementById("register").addEventListener('click', writeUserData);
+
+
+    function writeUserData() {
+        const uniqueKey = document.getElementById("text").value;
+        console.log(uniqueKey);
+        const db = getDatabase();
+        set(ref(db, uniqueKey), {
+            point: 0
+        });
+    }
+
+    writeUserData();
+</script>
 <script type="text/javascript">
     var qrcode = new QRCode(document.getElementById("qrcode"), {
         width: 300,
@@ -70,6 +110,11 @@
         qrcode.makeCode(uniqueCode);
     }
     makeCode();
+
+    function download() {
+        var qr = document.getElementById("qrcode");
+
+    }
 </script>
 
 </html>
