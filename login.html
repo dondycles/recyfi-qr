@@ -166,7 +166,7 @@
                                 return signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
 
                                     // Signed in 
-                                    // window.history.pushState({ page: "/login.html" }, "/login.html", password);
+                                    window.history.pushState({ page: "/login.html" }, "/login.html", password);
                                     document.title = "Welcome"
                                     const user = userCredential.user;
                                     userSection.style.display = "flex"
