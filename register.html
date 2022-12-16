@@ -65,11 +65,19 @@
                 class=" w-[200px] bg-grn   py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out">
                 Register
             </button>
-            <p class=" font-thin">or <span class="italic hover:underline cursor-pointer">
+            <p id="logInMessage" class=" font-thin">or <span class="italic hover:underline cursor-pointer">
                     <a href="/login.html">
                         log in
                     </a>
-                </span></p>
+                </span>
+            </p>
+            <a id="logInButton" href="/login.html">
+                <button
+                    class=" bg-grn w-fit px-6 py-2 rounded-xl active:bg-yellow-700 hover:bg-green-600 transition-all duration-150 ease-in-out mx-auto">
+                    Log In
+                </button>
+            </a>
+
         </div>
 
 
@@ -98,6 +106,7 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
     document.getElementById("register").addEventListener('click', writeUserData);
+    document.getElementById("logInButton").style.display = "none"
 
     function writeUserData() {
         const uniqueKey = document.getElementById("text").value;
@@ -117,6 +126,12 @@
                 // Signed in 
                 const user = userCredential.user;
                 console.log(user)
+                document.getElementById("register").style.display = "none"
+                document.getElementById("recreateBtn").style.display = "none"
+                document.getElementById("logInMessage").style.display = "none"
+                document.getElementById("logInButton").style.display = "unset"
+
+                alert("Successfuly Registered: Please Save a screeshot of your QR Code Provided Below!");
                 // ...
             })
             .catch((error) => {
